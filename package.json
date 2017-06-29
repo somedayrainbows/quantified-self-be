@@ -1,0 +1,33 @@
+{
+  "name": "quantified-self-be",
+  "version": "1.0.0",
+  "description": "backend for quantified self",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV=test mocha test/*-test.js",
+    "start": "nodemon server.js",
+    "debug": "NODE_ENV=test mocha debug test/*-test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/somedayrainbows/quantified-self-be.git"
+  },
+  "keywords": [
+    "node"
+  ],
+  "author": "Erin Bassity & Craig Ness",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/somedayrainbows/quantified-self-be/issues"
+  },
+  "homepage": "https://github.com/somedayrainbows/quantified-self-be#readme",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3"
+  },
+  "devDependencies": {
+    "chai": "^4.0.2",
+    "mocha": "^3.4.2",
+    "request": "^2.81.0"
+  }
+}
