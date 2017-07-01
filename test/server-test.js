@@ -22,6 +22,20 @@ describe('Server', function() {
     assert(app)
   })
 
+  describe('GET /api/foods/:id', function() {
+    this.timeout(10000000)
+
+    beforeEach(function(done) {
+      Food.createFood("").then(function() { done() })
+    })
+
+    afterEach(function(done) {
+      Food.emptyFoodsTable().then(function() {
+        done()
+      })
+    })
+
+  })
 
 
 })
