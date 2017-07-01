@@ -64,8 +64,8 @@ describe('Server', function() {
 
 
     it('should find a food by id', function(done) {
-      var id = 1;
-      eval(pry.it)
+      var id = 1
+
       this.request.get('/api/foods/' + id, function(error, response) {
         if(error) { done(error) }
 
@@ -79,7 +79,6 @@ describe('Server', function() {
         assert.ok(parsedFood.updated_at)
         done()
       })
-      })
     })
-  // })
+  })
 })
