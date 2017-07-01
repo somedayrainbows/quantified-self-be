@@ -19,10 +19,21 @@ describe('Server', function() {
     this.server.close()
   })
 
+
   it('exists', function() {
     assert(app)
   })
 
 
+  describe('GET /', function() {
+    it('should return a 200', function(done) {
+      this.request.get('/', function(error, response) {
+        if(error) { done(error) }
+
+        assert.equal(response.statusCode, 200)
+        done()
+      })
+    })
+  })
 
 })
