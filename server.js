@@ -5,7 +5,7 @@ var Food = require("./lib/models/food")
 var md5 = require('md5')
 
 
-app.set('port', process.env.PORT || 3000)
+app.set('port', process.env.PORT || 7878)
 app.locals.title = "Quantified Self"
 app.locals.foods = {
   name: 'Banana'

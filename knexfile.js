@@ -18,7 +18,7 @@ module.exports = {
     client: 'pg',
     connection: 'postgres://localhost/quantified_self_test',
     migrations: {
-      directory: './db/migations'
+      directory: './db/migrations'
     },
     seeds: {
       directory: './db/seeds/test'
