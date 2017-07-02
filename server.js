@@ -15,12 +15,11 @@ app.get('/', function(request, response) {
 
 app.get('/api/v1/foods/:id', function(request, response) {
   var id = request.params.id
-eval(pry.it)
+
   Food.find(id)
   .then(function(data) {
     if(data.rowCount == 0) { return response.sendStatus(404) }
-
-    return response.json(data.rows[0])
+    response.json(data.rows[0])
   })
 })
 

@@ -46,8 +46,8 @@ describe('Server', function() {
       Food.createFood('banana', 200, true)
       .then(function() {
         Food.createFood('taco', 400, false)
+        .then(function() { done() })
       })
-      .then(function() { done() })
     })
 
     afterEach(function(done) {
@@ -55,7 +55,7 @@ describe('Server', function() {
     })
 
 
-    xit('should return a 404 if the resource is not found', function(done) {
+    it('should return a 404 if the resource is not found', function(done) {
       this.request.get('/api/v1/foods/100000', function(error, response) {
         if(error) { done(error) }
 
