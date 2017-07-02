@@ -39,12 +39,14 @@ describe('Server', function() {
   })
 
 
-  describe('GET /api/foods/:id', function() {
+  describe('GET /api/v1/foods/:id', function() {
     this.timeout(10000000)
 
     beforeEach(function(done) {
       Food.createFood('banana', 200, true)
-      .then(Food.createFood('taco', 400, false))
+      .then(function() {
+        Food.createFood('taco', 400, false)
+      })
       .then(function() { done() })
     })
 
@@ -53,8 +55,8 @@ describe('Server', function() {
     })
 
 
-    it('should return a 404 if the resource is not found', function(done) {
-      this.request.get('/api/foods/100000', function(error, response) {
+    xit('should return a 404 if the resource is not found', function(done) {
+      this.request.get('/api/v1/foods/100000', function(error, response) {
         if(error) { done(error) }
 
         assert.equal(response.statusCode, 404)
@@ -62,19 +64,35 @@ describe('Server', function() {
       })
     })
 
-
     it('should find a food by id', function(done) {
       var id = 1
 
-      this.request.get('/api/foods/' + id, function(error, response) {
+      this.request.get('/api/v1/foods/' + id, function(error, response) {
         if(error) { done(error) }
 
         var parsedFood = JSON.parse(response.body)
 
         assert.equal(parsedFood.id, id)
-        assert.equal(parsedFood.name, "banana")
+        assert.equal(parsedFood.name, 'banana')
         assert.equal(parsedFood.calories, 200)
         assert.equal(parsedFood.active, true)
+        assert.ok(parsedFood.created_at)
+        assert.ok(parsedFood.updated_at)
+        done()
+      })
+    })
+
+    it('should find a different food by id', function(done) {
+      var id = 2
+
+      this.request.get('/api/v1/foods/' + id, function(error, response) {
+        if(error) { done(error) }
+
+        var parsedFood = JSON.parse(response.body)
+        assert.equal(parsedFood.id, id)
+        assert.equal(parsedFood.name, 'taco')
+        assert.equal(parsedFood.calories, 400)
+        assert.equal(parsedFood.active, false)
         assert.ok(parsedFood.created_at)
         assert.ok(parsedFood.updated_at)
         done()
