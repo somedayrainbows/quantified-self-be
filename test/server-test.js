@@ -1,6 +1,7 @@
 var assert = require('chai').assert
 var app = require('../server')
 var request = require('request')
+var Food = require('../lib/models/food')
 
 describe('Server', function() {
 
@@ -46,30 +47,6 @@ describe('GET /', function() {
   })
 })
 
-describe('GET /api/foods/:id', function() {
-  this.timeout(10000000)
-
-  it('returns a 404 if the resource is not found', function(done) {
-    this.request.get('/api/foods/456', function(error, response) {
-      if (error) { done(error) }
-      assert.equal(response.statusCode, 404)
-      done()
-    })
-  })
-
-  it('has the id and message from the resource', function(done) {
-    var id = 1
-    var message = app.locals.foods.wowowow
-
-    this.request.get('/api/foods/1', function(error, response) {
-      if (error) { done(error) }
-      assert(response.body.includes(id), `"${response.body}" does not inlcude "${id}"."`)
-      assert(response.body.includes(message), `"${response.body}" does not include "${message}".`)
-      done()
-    })
-  })
-})
-
 describe('POST /api/foods', function() {
   beforeEach(function() {
     app.locals.foods = {}
@@ -83,10 +60,10 @@ describe('POST /api/foods', function() {
   })
 
   it('should receive and store data', function(done) {
-    var message = {
-      message: 'I like pineapples!'
+    var foods = {
+      name: 'Pineapples'
     }
-    this.request.post('/api/foods', { form: message }, function(error, response) {
+    this.request.post('/api/foods', { form: foods }, function(error, response) {
       if (error) { done(error) }
 
       var foodCount = Object.keys(app.locals.foods).length
@@ -97,15 +74,44 @@ describe('POST /api/foods', function() {
   })
 })
 
+describe('GET /api/foods/:id', function() {
+  this.timeout(10000000)
+  beforeEach(function(done) {
+    Food.createFood("Banana", 15, new Date())
+    .then(function() { done() })
+    })
 
-  // beforeEach(function(done) {
-  //   Food.createFood("").then(function() { done() })
-  // })
-  //
-  // afterEach(function(done) {
-  //   Food.emptyFoodsTable().then(function() {
-  //     done()
-  //   })
-  // // })
-  //
-  // })
+    afterEach(function(done) {
+      Food.emptyFoodsTable().then(function() { done()
+    })
+  })
+
+  it('returns a 404 if the resource is not found', function(done) {
+    this.request.get('/api/foods/456', function(error, response) {
+      if (error) { done(error) }
+      assert.equal(response.statusCode, 404)
+      done()
+    })
+  })
+
+  it('has the id, name and calories from the resource', function(done) {
+    var ourRequest = this.request
+    Food.findFirst()
+    .then(function(data) {
+      var id = data.rows[0].id
+      var name = data.rows[0].name
+      var calories = data.rows[0].calories
+      var created_at = data.rows[0].created_at
+      ourRequest.get('/api/secrets/' + id, function(error, response) {
+        if (error) { done(error) }
+
+        var parsedFood = JSON.parse(response.body)
+        assert.equal(parsedFood.id, id)
+        assert.equal(parsedFood.name, name)
+        assert.equal(parsedFood.calories, calories)
+        assert.ok(parsedFood.created_at)
+        done()
+      })
+    })
+  })
+})

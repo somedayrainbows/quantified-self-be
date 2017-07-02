@@ -1,16 +1,17 @@
 var express = require('express')
 var app = express()
 var bodyParser = require('body-parser')
+var Food = require("./lib/models/food")
 var md5 = require('md5')
 
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended:true }))
 
 app.set('port', process.env.PORT || 3000)
 app.locals.title = "Quantified Self"
 app.locals.foods = {
-  wowowow: 'I am a banana'
+  name: 'Banana'
 }
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended:true }))
 
 app.get('/', function(request, response) {
   response.send(app.locals.title)
@@ -18,27 +19,38 @@ app.get('/', function(request, response) {
 
 app.get('/api/foods/:id', function(request, response) {
   var id = request.params.id
-  database.raw("SELECT * FROM foods WHERE id=?", [id])
+  Food.find(id)
   .then(function(data) {
-    if (data.rowCount == 0) { return
-      response.sendStatus(404) }
+    if (data.rowCount == 0) { return response.sendStatus(404) }
       response.json(data.row[0])
   })
 })
 
 app.post('/api/foods', function(request, response) {
-  var message = request.body.message
-  var id = md5(message)
+  var id = Date.now()
+  var name = request.body.name
+  // var name = request.body.name
+  // var calories = request.body.calories
+  // var created_at = request.body.created_at
+  // var message = request.data.rows[data.rows.length]
+  // var id = md5(message)
+  // example usage for md5:
+  // var msg = “super secret code”;
+  // var hash = md5(msg);
 
-  if (!message) {
+  if (!name) {
     return response.status(422).send({
-      error: 'No message property provided'
+      error: 'No name property provided'
     })
-  } else {
-    id = md5(message)
-    app.locals.foods[id] = message
-    response.status(201).json({ id, message} )
   }
+  // } else if (!calories) {
+  //   return response.status(422).send({
+  //     error: 'No calories property provided'
+  //   })
+  // } else {
+  //   id = md5(message)
+    app.locals.foods[id] = name
+    response.status(201).json({ id, name } )
 })
 
 if(!module.parent) {

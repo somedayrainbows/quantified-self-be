@@ -4,19 +4,19 @@ module.exports = {
 
   development: {
     client: 'pg',
-    connection: 'postgres://localhost/foods',
+    connection: 'postgres://localhost/quantified_self',
     migrations: {
-      director: './db/migrations'
+      directory: './db/migrations'
     },
     seeds: {
-      director: './db/seeds/dev'
+      directory: './db/seeds/dev'
     },
     useNullAsDefault: true
   },
 
   test: {
     client: 'pg',
-    connection: 'postgres://localhost/foods_test',
+    connection: 'postgres://localhost/quantified_self_test',
     migrations: {
       directory: './db/migations'
     },
