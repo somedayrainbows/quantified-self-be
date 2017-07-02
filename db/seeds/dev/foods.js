@@ -1,16 +1,15 @@
 exports.seed = function(knex, Promise) {
   return knex.raw('TRUNCATE foods RESTART IDENTITY')
-  .then(function() {
+  .then(function () {
     return Promise.all([
       knex.raw(
-        'INSERT INTO foods (name, calories, created_at) VALUES (?,?,?)', ["Avocado", 20, new Date()]
+        'INSERT INTO foods (name, calories, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
+        ["banana", 200, true, new Date(), new Date()]
       ),
       knex.raw(
-        'INSERT INTO foods (name, calories, created_at) VALUES (?,?,?)', ["Banana", 15, new Date()]
-      ),
-      knex.raw(
-        'INSERT INTO foods (name, calories, created_at) VALUES (?,?,?)', ["Toast", 100, new Date()]
+        'INSERT INTO foods (name, calories, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
+        ["baguette", 500, false, new Date(), new Date()]
       )
-    ]);
-  });
-};
+    ])
+  })
+}
