@@ -23,6 +23,19 @@ app.get('/api/v1/foods/:id', function(request, response) {
   })
 })
 
+// app.post('/api/v1/foods', function(request, response) {
+//   var id = Date.now()
+//   var name = request.body.name
+//
+//   if (!name) {
+//     return response.status(422).send({
+//       error: 'No name property provided'
+//     })
+//   }
+//   app.locals.foods[id] = name
+//   response.status(201).json({ id, name } )
+// })
+
 if(!module.parent) {
   app.listen(app.get('port'), function() {
     console.log(app.locals.title + " is running on " + app.get('port') + ".")
