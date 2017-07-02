@@ -4,7 +4,7 @@
   "description": "backend for quantified self",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test mocha test/*-test.js",
+    "test": "NODE_ENV=test mocha test/**/*-test.js",
     "start": "nodemon server.js",
     "debug": "NODE_ENV=test mocha debug test/*-test.js"
   },
@@ -23,11 +23,15 @@
   "homepage": "https://github.com/somedayrainbows/quantified-self-be#readme",
   "dependencies": {
     "body-parser": "^1.17.2",
-    "express": "^4.15.3"
+    "express": "^4.15.3",
+    "knex": "^0.13.0",
+    "pg": "^6.4.0"
   },
   "devDependencies": {
     "chai": "^4.0.2",
     "mocha": "^3.4.2",
+    "nodemon": "^1.11.0",
+    "pryjs": "^1.0.3",
     "request": "^2.81.0"
   }
 }
