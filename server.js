@@ -13,6 +13,16 @@ app.get('/', function(request, response) {
   response.send(app.locals.title);
 })
 
+app.get('/api/v1/foods', function(request, response) {
+  Food.all()
+  .then(function(data) {
+    if(data.rowCount == 0) { return response.status(422).send({
+        error: 'No records found' })
+     }
+     response.json(data.rows)
+  })
+})
+
 app.get('/api/v1/foods/:id', function(request, response) {
   var id = request.params.id
 
