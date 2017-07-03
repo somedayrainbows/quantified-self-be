@@ -39,6 +39,43 @@ describe('Server', function() {
   })
 
 
+  describe('GET /api/v1/foods', function() {
+    this.timeout(10000000)
+
+    beforeEach(function(done) {
+      Food.createFood('banana', 200, true)
+      .then(function() {
+        Food.createFood('taco', 400, false)
+        .then(function() {
+          Food.createFood('cheetos', 150, false)
+        .then(function() { done() })
+        })
+      })
+    })
+
+    afterEach(function(done) {
+      Food.emptyFoodsTable().then(function() { done() })
+    })
+
+    it('returns a list of all foods', function(done) {
+      this.request.get('/api/v1/foods', function(error, response) {
+        if (error) { done(error) }
+
+        var allFood = JSON.parse(response.body)
+
+        assert.equal(allFood.length, 3)
+        assert.equal(allFood[0].name, 'banana')
+        assert.equal(allFood[2].name, 'cheetos')
+        assert.equal(allFood[1].calories, 400)
+        assert.ok(allFood[1].created_at)
+        assert.ok(allFood[2].updated_at)
+        assert.isUndefined(allFood[10])
+        done()
+      })
+    })
+  })
+
+
   describe('GET /api/v1/foods/:id', function() {
     this.timeout(10000000)
 
