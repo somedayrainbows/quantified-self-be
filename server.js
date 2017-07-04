@@ -2,7 +2,6 @@ var express = require('express')
 var app = express()
 var bodyParser = require('body-parser')
 var Food = require('./lib/models/food')
-var pry = require('pryjs')
 
 
 app.set('port', process.env.PORT || 7878);

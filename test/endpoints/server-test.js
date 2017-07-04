@@ -2,7 +2,6 @@ var assert = require('chai').assert
 var app = require('../../server')
 var request = require('request')
 var Food = require('../../lib/models/food')
-var pry = require('pryjs')
 
 
 describe('Server', function() {
@@ -189,6 +188,30 @@ describe('Server', function() {
         assert.equal(response.body.name, 'taco')
         assert.equal(response.body.calories, 5000)
         assert.equal(response.body.active, false)
+        assert.ok(response.body.created_at)
+        assert.notEqual(response.body.updated_at, response.body.created_at)
+        done()
+      })
+    })
+
+    it('should update a food\'s name and calories', function(done) {
+      var putOptions = {
+        url: '/api/v1/foods/1',
+        method: 'PUT',
+        json: true,
+        body: {
+          name: 'tomato',
+          calories: 7777
+        }
+      }
+
+      this.request(putOptions, function(error, response) {
+        if(error) { done(error) }
+
+        assert.equal(response.body.id, 1)
+        assert.equal(response.body.name, 'tomato')
+        assert.equal(response.body.calories, 7777)
+        assert.equal(response.body.active, true)
         assert.ok(response.body.created_at)
         assert.notEqual(response.body.updated_at, response.body.created_at)
         done()
