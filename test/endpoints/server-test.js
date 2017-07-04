@@ -171,5 +171,28 @@ describe('Server', function() {
         done()
       })
     })
+
+    it('should update a food\'s calories', function(done) {
+      var putOptions = {
+        url: '/api/v1/foods/2',
+        method: 'PUT',
+        json: true,
+        body: {
+          calories: 5000
+        }
+      }
+
+      this.request(putOptions, function(error, response) {
+        if(error) { done(error) }
+
+        assert.equal(response.body.id, 2)
+        assert.equal(response.body.name, 'taco')
+        assert.equal(response.body.calories, 5000)
+        assert.equal(response.body.active, false)
+        assert.ok(response.body.created_at)
+        assert.notEqual(response.body.updated_at, response.body.created_at)
+        done()
+      })
+    })
   })
 })
