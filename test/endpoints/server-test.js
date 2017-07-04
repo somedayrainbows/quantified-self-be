@@ -167,7 +167,7 @@ describe('Server', function() {
         assert.equal(response.body.calories, 200)
         assert.equal(response.body.active, true)
         assert.ok(response.body.created_at)
-        // assert.equal(response.body.updated_at, )
+        assert.notEqual(response.body.updated_at, response.body.created_at)
         done()
       })
     })
