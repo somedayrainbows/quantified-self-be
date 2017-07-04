@@ -2,7 +2,7 @@ var express = require('express')
 var app = express()
 var bodyParser = require('body-parser')
 var Food = require('./lib/models/food')
-var pry = require('pryjs')
+
 
 app.set('port', process.env.PORT || 7878);
 app.locals.title = "Quantified Self"
@@ -15,22 +15,22 @@ app.get('/', function(request, response) {
 
 app.get('/api/v1/foods', function(request, response) {
   Food.all()
-  .then(function(data) {
-    if(data.rowCount == 0) { return response.status(422).send({
-        error: 'No records found' })
-     }
-     response.json(data.rows)
-  })
+    .then(function(data) {
+      if(data.rowCount == 0) {
+        return response.status(422).send( {error: 'No records found' } )
+      }
+      response.json(data.rows)
+    })
 })
 
 app.get('/api/v1/foods/:id', function(request, response) {
   var id = request.params.id
 
   Food.find(id)
-  .then(function(data) {
-    if(data.rowCount == 0) { return response.sendStatus(404) }
-    response.json(data.rows[0])
-  })
+    .then(function(data) {
+      if(data.rowCount == 0) { return response.sendStatus(404) }
+      response.json(data.rows[0])
+    })
 })
 
 if(!module.parent) {
