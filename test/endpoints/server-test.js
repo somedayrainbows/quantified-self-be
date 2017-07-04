@@ -2,6 +2,7 @@ var assert = require('chai').assert
 var app = require('../../server')
 var request = require('request')
 var Food = require('../../lib/models/food')
+var pry = require('pryjs')
 
 
 describe('Server', function() {
@@ -127,6 +128,46 @@ describe('Server', function() {
         assert.equal(parsedFood.active, false)
         assert.ok(parsedFood.created_at)
         assert.ok(parsedFood.updated_at)
+        done()
+      })
+    })
+  })
+
+  describe('PUT /api/v1/foods/:id', function() {
+    this.timeout(1000000000)
+
+    beforeEach(function(done) {
+      Food.createFood('banana', 200, true)
+        .then(function() {
+          Food.createFood('taco', 400, false)
+            .then(function() { done() })
+        })
+    })
+
+    afterEach(function(done) {
+      Food.emptyFoodsTable().then(function() { done() })
+    })
+
+
+    it('should update a food\'s name', function(done) {
+      var putOptions = {
+        url: '/api/v1/foods/1',
+        method: 'PUT',
+        json: true,
+        body: {
+          name: 'steak'
+        }
+      }
+
+      this.request(putOptions, function(error, response) {
+        if(error) { done(error) }
+
+        assert.equal(response.body.id, 1)
+        assert.equal(response.body.name, 'steak')
+        assert.equal(response.body.calories, 200)
+        assert.equal(response.body.active, true)
+        assert.ok(response.body.created_at)
+        // assert.equal(response.body.updated_at, )
         done()
       })
     })
