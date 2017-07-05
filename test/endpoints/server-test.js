@@ -136,4 +136,38 @@ describe('Server', function() {
       })
     })
   })
+
+  describe('POST /api/v1/foods', function() {
+    this.timeout(10000000)
+
+    beforeEach(function(done) {
+      Food.createFood('banana', 200, true)
+      .then(function() {
+        Food.createFood('taco', 400, false)
+        .then(function() { done() })
+      })
+    })
+
+    afterEach(function(done) {
+      Food.emptyFoodsTable().then(function() { done() })
+    })
+
+    it('should receive and store data', function(done) {
+      var postOptions = {
+          name: 'pasta',
+          calories: 200,
+          active: true
+      }
+
+    this.request.post('/api/v1/foods', { form: postOptions }, function(error, response) {
+      if (error) { done(error) }
+      eval(pry.it);
+
+      var foodCount = Object.keys(Food.all).length
+
+      assert.equal(foodCount, 3)
+      assert.equal()
+      })
+    })
+  })
 })
