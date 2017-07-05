@@ -1,7 +1,6 @@
 var assert = require('chai').assert
 var app = require('../../server')
 var request = require('request')
-var pry = require('pryjs')
 var Food = require('../../lib/models/food')
 
 
@@ -40,17 +39,15 @@ describe('Server', function() {
 
 
   describe('GET /api/v1/foods', function() {
-    this.timeout(10000000)
-
     beforeEach(function(done) {
       Food.createFood('banana', 200, true)
-      .then(function() {
-        Food.createFood('taco', 400, false)
         .then(function() {
-          Food.createFood('cheetos', 150, false)
-        .then(function() { done() })
+          Food.createFood('taco', 400, false)
+            .then(function() {
+              Food.createFood('cheetos', 150, false)
+                .then(function() { done() })
+            })
         })
-      })
     })
 
     afterEach(function(done) {
@@ -77,14 +74,12 @@ describe('Server', function() {
 
 
   describe('GET /api/v1/foods/:id', function() {
-    this.timeout(10000000)
-
     beforeEach(function(done) {
       Food.createFood('banana', 200, true)
-      .then(function() {
-        Food.createFood('taco', 400, false)
-        .then(function() { done() })
-      })
+        .then(function() {
+          Food.createFood('taco', 400, false)
+            .then(function() { done() })
+        })
     })
 
     afterEach(function(done) {
