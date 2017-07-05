@@ -1,5 +1,6 @@
 var Food = require('../../lib/models/food')
 var assert = require('chai').assert
+process.env.NODE_ENV = 'test'
 
 
 describe('Food', function() {

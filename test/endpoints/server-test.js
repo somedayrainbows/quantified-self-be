@@ -131,4 +131,91 @@ describe('Server', function() {
       })
     })
   })
+
+  describe('PUT /api/v1/foods/:id', function() {
+    this.timeout(1000000000)
+
+    beforeEach(function(done) {
+      Food.createFood('banana', 200, true)
+        .then(function() {
+          Food.createFood('taco', 400, false)
+            .then(function() { done() })
+        })
+    })
+
+    afterEach(function(done) {
+      Food.emptyFoodsTable().then(function() { done() })
+    })
+
+
+    it('should update a food\'s name', function(done) {
+      var putOptions = {
+        url: '/api/v1/foods/1',
+        method: 'PUT',
+        json: true,
+        body: {
+          name: 'steak'
+        }
+      }
+
+      this.request(putOptions, function(error, response) {
+        if(error) { done(error) }
+
+        assert.equal(response.body.id, 1)
+        assert.equal(response.body.name, 'steak')
+        assert.equal(response.body.calories, 200)
+        assert.equal(response.body.active, true)
+        assert.ok(response.body.created_at)
+        assert.notEqual(response.body.updated_at, response.body.created_at)
+        done()
+      })
+    })
+
+    it('should update a food\'s calories', function(done) {
+      var putOptions = {
+        url: '/api/v1/foods/2',
+        method: 'PUT',
+        json: true,
+        body: {
+          calories: 5000
+        }
+      }
+
+      this.request(putOptions, function(error, response) {
+        if(error) { done(error) }
+
+        assert.equal(response.body.id, 2)
+        assert.equal(response.body.name, 'taco')
+        assert.equal(response.body.calories, 5000)
+        assert.equal(response.body.active, false)
+        assert.ok(response.body.created_at)
+        assert.notEqual(response.body.updated_at, response.body.created_at)
+        done()
+      })
+    })
+
+    it('should update a food\'s name and calories', function(done) {
+      var putOptions = {
+        url: '/api/v1/foods/1',
+        method: 'PUT',
+        json: true,
+        body: {
+          name: 'tomato',
+          calories: 7777
+        }
+      }
+
+      this.request(putOptions, function(error, response) {
+        if(error) { done(error) }
+
+        assert.equal(response.body.id, 1)
+        assert.equal(response.body.name, 'tomato')
+        assert.equal(response.body.calories, 7777)
+        assert.equal(response.body.active, true)
+        assert.ok(response.body.created_at)
+        assert.notEqual(response.body.updated_at, response.body.created_at)
+        done()
+      })
+    })
+  })
 })

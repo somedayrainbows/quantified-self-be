@@ -33,6 +33,20 @@ app.get('/api/v1/foods/:id', function(request, response) {
     })
 })
 
+app.put('/api/v1/foods/:id', function (request, response) {
+  var id = request.params.id
+  var payload = request.body
+
+  Food.update(id, payload)
+    .then(function() {
+      Food.find(id)
+        .then(function(data) {
+          response.json(data.rows[0])
+        })
+    })
+})
+
+
 if(!module.parent) {
   app.listen(app.get('port'), function() {
     console.log(app.locals.title + " is running on " + app.get('port') + ".")
