@@ -17,7 +17,7 @@ app.get('/api/v1/foods', function(request, response) {
   Food.all()
     .then(function(data) {
       if(data.rowCount == 0) {
-        return response.status(422).send( {error: 'No records found' } )
+        return response.status(422).send({ error: 'No records found' })
       }
       response.json(data.rows)
     })
@@ -46,6 +46,19 @@ app.put('/api/v1/foods/:id', function (request, response) {
     })
 })
 
+app.delete('/api/v1/foods/:id', function (request, response) {
+  var id = request.params.id
+
+  Food.destroy(id)
+    .then(function() {
+      Food.find(id)
+        .then(function(data) {
+          if(data.rowCount == 0) {
+            return response.status(204).send({ success: 'Record was successfully deleted' })
+          }
+        })
+    })
+})
 
 if(!module.parent) {
   app.listen(app.get('port'), function() {
