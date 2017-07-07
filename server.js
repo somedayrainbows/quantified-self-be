@@ -2,12 +2,17 @@ var express = require('express')
 var app = express()
 var bodyParser = require('body-parser')
 var Food = require('./lib/models/food')
-
+var pry = require('pryjs');
 
 app.set('port', process.env.PORT || 7878);
 app.locals.title = "Quantified Self"
+
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(function(request, response, next) {
+  console.log('Something is happening...')
+  next()
+})
 
 app.get('/', function(request, response) {
   response.send(app.locals.title);
@@ -31,6 +36,33 @@ app.get('/api/v1/foods/:id', function(request, response) {
       if(data.rowCount == 0) { return response.sendStatus(404) }
       response.json(data.rows[0])
     })
+})
+
+app.post('/api/v1/foods', function(request, response) {
+  var name = request.body.name
+  var calories = request.body.calories
+  var active = request.body.active
+
+  // if (!name) {
+  //   return response.status(422).send({
+  //     error: 'No name property provided!'
+  //   })
+  // }
+
+  Food.createFood(name, calories, active)
+  .then(function() {
+    Food.findByName(name)
+    .then(function(data) {
+      response.json(data.rows[0])
+    })
+  })
+
+  // eval(pry.it);
+
+  //   if (error)
+  //   response.send(error)
+  //   response.json({ message: 'Food created!' })
+  //   response.status(201).json({ id, name })
 })
 
 app.put('/api/v1/foods/:id', function (request, response) {

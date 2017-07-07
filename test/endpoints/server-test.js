@@ -1,6 +1,7 @@
 var assert = require('chai').assert
 var app = require('../../server')
 var request = require('request')
+var pry = require('pryjs');
 var Food = require('../../lib/models/food')
 
 
@@ -133,6 +134,46 @@ describe('Server', function() {
     })
   })
 
+  describe('POST /api/v1/foods', function() {
+    this.timeout(10000000)
+
+    beforeEach(function(done) {
+      Food.createFood('banana', 200, true)
+      .then(function() {
+        Food.createFood('taco', 400, false)
+        .then(function() { done() })
+      })
+    })
+
+    afterEach(function(done) {
+      Food.emptyFoodsTable().then(function() { done() })
+    })
+
+    it('should receive and store data', function(done) {
+      var postOptions = {
+          url: '/api/v1/foods',
+          method: 'POST',
+          json: true,
+          body: {
+            name: 'pasta',
+            calories: 200,
+            active: true
+          }
+      }
+
+    this.request(postOptions, function(error, response) {
+      if (error) { done(error) }
+
+      assert.equal(response.body.id, 3)
+      assert.equal(response.body.name, "pasta")
+      assert.equal(response.body.calories, 200)
+      assert.equal(response.body.active, true)
+      assert.ok(response.body.created_at)
+      done()
+      })
+    })
+  })
+
   describe('PUT /api/v1/foods/:id', function() {
     beforeEach(function(done) {
       Food.createFood('banana', 200, true)
@@ -145,7 +186,6 @@ describe('Server', function() {
     afterEach(function(done) {
       Food.emptyFoodsTable().then(function() { done() })
     })
-
 
     it('should update a food\'s name', function(done) {
       var putOptions = {
