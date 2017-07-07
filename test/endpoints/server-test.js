@@ -1,7 +1,7 @@
 var assert = require('chai').assert
 var app = require('../../server')
 var request = require('request')
-var pry = require('pryjs')
+var pry = require('pryjs');
 var Food = require('../../lib/models/food')
 
 
@@ -40,17 +40,15 @@ describe('Server', function() {
 
 
   describe('GET /api/v1/foods', function() {
-    this.timeout(10000000)
-
     beforeEach(function(done) {
       Food.createFood('banana', 200, true)
-      .then(function() {
-        Food.createFood('taco', 400, false)
         .then(function() {
-          Food.createFood('cheetos', 150, false)
-        .then(function() { done() })
+          Food.createFood('taco', 400, false)
+            .then(function() {
+              Food.createFood('cheetos', 150, false)
+                .then(function() { done() })
+            })
         })
-      })
     })
 
     afterEach(function(done) {
@@ -77,14 +75,12 @@ describe('Server', function() {
 
 
   describe('GET /api/v1/foods/:id', function() {
-    this.timeout(10000000)
-
     beforeEach(function(done) {
       Food.createFood('banana', 200, true)
-      .then(function() {
-        Food.createFood('taco', 400, false)
-        .then(function() { done() })
-      })
+        .then(function() {
+          Food.createFood('taco', 400, false)
+            .then(function() { done() })
+        })
     })
 
     afterEach(function(done) {
@@ -154,19 +150,111 @@ describe('Server', function() {
 
     it('should receive and store data', function(done) {
       var postOptions = {
-          name: 'pasta',
-          calories: 200,
-          active: true
+          url: '/api/v1/foods',
+          method: 'POST',
+          json: true,
+          body: {
+            name: 'pasta',
+            calories: 200,
+            active: true
+          }
       }
 
-    this.request.post('/api/v1/foods', { form: postOptions }, function(error, response) {
+    this.request(postOptions, function(error, response) {
       if (error) { done(error) }
-      eval(pry.it);
 
-      var foodCount = Object.keys(Food.all).length
+      assert.equal(response.body.id, 3)
+      assert.equal(response.body.name, "pasta")
+      assert.equal(response.body.calories, 200)
+      assert.equal(response.body.active, true)
+      assert.ok(response.body.created_at)
+      done()
+      })
+    })
+  })
 
-      assert.equal(foodCount, 3)
-      assert.equal()
+  describe('PUT /api/v1/foods/:id', function() {
+    this.timeout(1000000000)
+
+    beforeEach(function(done) {
+      Food.createFood('banana', 200, true)
+        .then(function() {
+          Food.createFood('taco', 400, false)
+            .then(function() { done() })
+        })
+    })
+
+    afterEach(function(done) {
+      Food.emptyFoodsTable().then(function() { done() })
+    })
+
+    it('should update a food\'s name', function(done) {
+      var putOptions = {
+        url: '/api/v1/foods/1',
+        method: 'PUT',
+        json: true,
+        body: {
+          name: 'steak'
+        }
+      }
+
+      this.request(putOptions, function(error, response) {
+        if(error) { done(error) }
+
+        assert.equal(response.body.id, 1)
+        assert.equal(response.body.name, 'steak')
+        assert.equal(response.body.calories, 200)
+        assert.equal(response.body.active, true)
+        assert.ok(response.body.created_at)
+        assert.notEqual(response.body.updated_at, response.body.created_at)
+        done()
+      })
+    })
+
+    it('should update a food\'s calories', function(done) {
+      var putOptions = {
+        url: '/api/v1/foods/2',
+        method: 'PUT',
+        json: true,
+        body: {
+          calories: 5000
+        }
+      }
+
+      this.request(putOptions, function(error, response) {
+        if(error) { done(error) }
+
+        assert.equal(response.body.id, 2)
+        assert.equal(response.body.name, 'taco')
+        assert.equal(response.body.calories, 5000)
+        assert.equal(response.body.active, false)
+        assert.ok(response.body.created_at)
+        assert.notEqual(response.body.updated_at, response.body.created_at)
+        done()
+      })
+    })
+
+    it('should update a food\'s name and calories', function(done) {
+      var putOptions = {
+        url: '/api/v1/foods/1',
+        method: 'PUT',
+        json: true,
+        body: {
+          name: 'tomato',
+          calories: 7777
+        }
+      }
+
+      this.request(putOptions, function(error, response) {
+        if(error) { done(error) }
+
+        assert.equal(response.body.id, 1)
+        assert.equal(response.body.name, 'tomato')
+        assert.equal(response.body.calories, 7777)
+        assert.equal(response.body.active, true)
+        assert.ok(response.body.created_at)
+        assert.notEqual(response.body.updated_at, response.body.created_at)
+        done()
       })
     })
   })
