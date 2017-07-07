@@ -121,6 +121,7 @@ describe('Server', function() {
         if(error) { done(error) }
 
         var parsedFood = JSON.parse(response.body)
+
         assert.equal(parsedFood.id, id)
         assert.equal(parsedFood.name, 'taco')
         assert.equal(parsedFood.calories, 400)
@@ -133,8 +134,6 @@ describe('Server', function() {
   })
 
   describe('PUT /api/v1/foods/:id', function() {
-    this.timeout(1000000000)
-
     beforeEach(function(done) {
       Food.createFood('banana', 200, true)
         .then(function() {
@@ -215,6 +214,51 @@ describe('Server', function() {
         assert.ok(response.body.created_at)
         assert.notEqual(response.body.updated_at, response.body.created_at)
         done()
+      })
+    })
+  })
+
+
+  describe('DELETE /api/v1/foods/:id', function() {
+    beforeEach(function(done) {
+      Food.createFood('banana', 200, true)
+        .then(function() {
+          Food.createFood('taco', 400, false)
+            .then(function() { done() })
+        })
+    })
+
+    afterEach(function(done) {
+      Food.emptyFoodsTable().then(function() { done() })
+    })
+
+
+    it('should delete a food given an id', function(done) {
+      var id = 1
+      var ourRequest = this.request
+
+      deleteOptions = {
+        url: '/api/v1/foods/' + id,
+        method: 'DELETE'
+      }
+
+      ourRequest(deleteOptions, function(error, response) {
+        if(error) { done(error) }
+        assert.equal(response.statusCode, 200)
+
+        ourRequest.get('api/v1/foods', function(error, response) {
+          if(error) { done(error) }
+
+          var parsedFood = JSON.parse(response.body)
+
+          assert.equal(parsedFood.length, 1)
+          assert.equal(parsedFood[0].name, 'taco')
+          assert.equal(parsedFood[0].calories, 400)
+          assert.equal(parsedFood[0].active, false)
+          assert.ok(parsedFood[0].created_at)
+          assert.ok(parsedFood[0].updated_at)
+          done()
+        })
       })
     })
   })
