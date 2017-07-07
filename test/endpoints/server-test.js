@@ -244,7 +244,7 @@ describe('Server', function() {
 
       ourRequest(deleteOptions, function(error, response) {
         if(error) { done(error) }
-        assert.equal(response.statusCode, 204)
+        assert.equal(response.statusCode, 200)
 
         ourRequest.get('api/v1/foods', function(error, response) {
           if(error) { done(error) }

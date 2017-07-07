@@ -51,11 +51,9 @@ app.delete('/api/v1/foods/:id', function (request, response) {
 
   Food.destroy(id)
     .then(function() {
-      Food.find(id)
+      Food.all()
         .then(function(data) {
-          if(data.rowCount == 0) {
-            return response.status(204).send({ success: 'Record was successfully deleted' })
-          }
+          response.json(data.rows)
         })
     })
 })
