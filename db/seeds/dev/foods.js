@@ -3,20 +3,20 @@ exports.seed = function(knex, Promise) {
     .then(function () {
       return Promise.all([
         knex.raw(
-          'INSERT INTO foods (name, calories, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
-          ["banana", 200, true, new Date(), new Date()]
+          'INSERT INTO foods (name, calories, created_at, updated_at) VALUES (?, ?, ?, ?)',
+          ["banana", 200, new Date(), new Date()]
         ),
         knex.raw(
-          'INSERT INTO foods (name, calories, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
-          ["crepe", 230, true, new Date(), new Date()]
+          'INSERT INTO foods (name, calories, created_at, updated_at) VALUES (?, ?, ?, ?)',
+          ["crepe", 230, new Date(), new Date()]
         ),
         knex.raw(
-          'INSERT INTO foods (name, calories, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
-          ["croissant", 280, true, new Date(), new Date()]
+          'INSERT INTO foods (name, calories, created_at, updated_at) VALUES (?, ?, ?, ?)',
+          ["croissant", 280, new Date(), new Date()]
         ),
         knex.raw(
-          'INSERT INTO foods (name, calories, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
-          ["baguette", 200, false, new Date(), new Date()]
+          'INSERT INTO foods (name, calories, created_at, updated_at) VALUES (?, ?, ?, ?)',
+          ["baguette", 200, new Date(), new Date()]
         )
       ])
     })

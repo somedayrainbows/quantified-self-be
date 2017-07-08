@@ -5,7 +5,7 @@ process.env.NODE_ENV = 'test'
 
 describe('Food', function() {
   beforeEach(function(done) {
-    Food.createFood('pizza', 1000, true)
+    Food.createFood('pizza', 1000)
       .then(function() { done() })
   })
 
@@ -16,7 +16,7 @@ describe('Food', function() {
 
   describe('methods', function() {
     it('.all', function(done) {
-      Food.createFood('cheeseburger', 800, true)
+      Food.createFood('cheeseburger', 800)
         .then(function() {
           Food.all()
             .then(function(data) {

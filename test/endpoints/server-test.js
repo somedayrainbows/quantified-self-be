@@ -41,11 +41,11 @@ describe('Server', function() {
 
   describe('GET /api/v1/foods', function() {
     beforeEach(function(done) {
-      Food.createFood('banana', 200, true)
+      Food.createFood('banana', 200)
         .then(function() {
-          Food.createFood('taco', 400, false)
+          Food.createFood('taco', 400)
             .then(function() {
-              Food.createFood('cheetos', 150, false)
+              Food.createFood('cheetos', 150)
                 .then(function() { done() })
             })
         })
@@ -76,9 +76,9 @@ describe('Server', function() {
 
   describe('GET /api/v1/foods/:id', function() {
     beforeEach(function(done) {
-      Food.createFood('banana', 200, true)
+      Food.createFood('banana', 200)
         .then(function() {
-          Food.createFood('taco', 400, false)
+          Food.createFood('taco', 400)
             .then(function() { done() })
         })
     })
@@ -126,7 +126,7 @@ describe('Server', function() {
         assert.equal(parsedFood.id, id)
         assert.equal(parsedFood.name, 'taco')
         assert.equal(parsedFood.calories, 400)
-        assert.equal(parsedFood.active, false)
+        assert.equal(parsedFood.active, true)
         assert.ok(parsedFood.created_at)
         assert.ok(parsedFood.updated_at)
         done()
@@ -135,12 +135,10 @@ describe('Server', function() {
   })
 
   describe('POST /api/v1/foods', function() {
-    this.timeout(10000000)
-
     beforeEach(function(done) {
-      Food.createFood('banana', 200, true)
+      Food.createFood('banana', 200)
       .then(function() {
-        Food.createFood('taco', 400, false)
+        Food.createFood('taco', 400)
         .then(function() { done() })
       })
     })
@@ -156,8 +154,7 @@ describe('Server', function() {
           json: true,
           body: {
             name: 'pasta',
-            calories: 200,
-            active: true
+            calories: 200
           }
       }
 
@@ -176,9 +173,9 @@ describe('Server', function() {
 
   describe('PUT /api/v1/foods/:id', function() {
     beforeEach(function(done) {
-      Food.createFood('banana', 200, true)
+      Food.createFood('banana', 200)
         .then(function() {
-          Food.createFood('taco', 400, false)
+          Food.createFood('taco', 400)
             .then(function() { done() })
         })
     })
@@ -226,7 +223,7 @@ describe('Server', function() {
         assert.equal(response.body.id, 2)
         assert.equal(response.body.name, 'taco')
         assert.equal(response.body.calories, 5000)
-        assert.equal(response.body.active, false)
+        assert.equal(response.body.active, true)
         assert.ok(response.body.created_at)
         assert.notEqual(response.body.updated_at, response.body.created_at)
         done()
@@ -261,9 +258,9 @@ describe('Server', function() {
 
   describe('DELETE /api/v1/foods/:id', function() {
     beforeEach(function(done) {
-      Food.createFood('banana', 200, true)
+      Food.createFood('banana', 200)
         .then(function() {
-          Food.createFood('taco', 400, false)
+          Food.createFood('taco', 400)
             .then(function() { done() })
         })
     })
@@ -294,7 +291,7 @@ describe('Server', function() {
           assert.equal(parsedFood.length, 1)
           assert.equal(parsedFood[0].name, 'taco')
           assert.equal(parsedFood[0].calories, 400)
-          assert.equal(parsedFood[0].active, false)
+          assert.equal(parsedFood[0].active, true)
           assert.ok(parsedFood[0].created_at)
           assert.ok(parsedFood[0].updated_at)
           done()
