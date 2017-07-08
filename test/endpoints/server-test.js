@@ -1,8 +1,8 @@
 var assert = require('chai').assert
 var app = require('../../server')
 var request = require('request')
-var pry = require('pryjs');
 var Food = require('../../lib/models/food')
+var Meal = require('../../lib/models/meal')
 
 
 describe('Server', function() {
@@ -50,7 +50,17 @@ describe('Server', function() {
             })
         })
     })
-
+    // beforeEach(() => knex.migrate.rollback()
+    //   .then(() => knex.migrate.latest())
+    //   .then(() => knex.seed.run())
+    // );
+    //
+    // afterEach(function(done) {
+    //   knex.migrate.rollback()
+    //   .then(function() {
+    //     done();
+    //   });
+    // });
     afterEach(function(done) {
       Food.emptyFoodsTable().then(function() { done() })
     })
@@ -307,5 +317,63 @@ describe('Server', function() {
         })
       })
     })
+
+    describe('GET /api/v1/meals/:id', function() {
+      beforeEach(function(done) {
+        Meal.createMeal('Breakfast', 400)
+          .then(function() {
+            Meal.createMeal('Lunch', 600)
+              .then(function() { done() })
+          })
+      })
+
+      afterEach(function(done) {
+        Meal.emptyMealsTable().then(function() { done() })
+      })
+
+
+      it('should return a 404 if the resource is not found', function(done) {
+        this.request.get('/api/v1/meals/100000', function(error, response) {
+          if(error) { done(error) }
+
+          assert.equal(response.statusCode, 404)
+          console.log('That meal doesn\'t exist.')
+          done()
+        })
+      })
+
+      it('should find a meal by id', function(done) {
+        var id = 1
+
+        this.request.get('/api/v1/meals/' + id, function(error, response) {
+          if(error) { done(error) }
+
+          var parsedMeal = JSON.parse(response.body)
+
+          assert.equal(parsedMeal.id, id)
+          assert.equal(parsedMeal.name, 'Breakfast')
+          assert.equal(parsedMeal.goal_calories, 400)
+          assert.ok(parsedMeal.created_at)
+          done()
+        })
+      })
+
+      it('should find a different meal by id', function(done) {
+        var id = 2
+
+        this.request.get('/api/v1/meals/' + id, function(error, response) {
+          if(error) { done(error) }
+
+          var parsedMeal = JSON.parse(response.body)
+
+          assert.equal(parsedMeal.id, id)
+          assert.equal(parsedMeal.name, 'Lunch')
+          assert.equal(parsedMeal.goal_calories, 600)
+          assert.ok(parsedMeal.created_at)
+          done()
+        })
+      })
+    })
+
   })
 })

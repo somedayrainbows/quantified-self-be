@@ -2,7 +2,7 @@ var express = require('express')
 var app = express()
 var bodyParser = require('body-parser')
 var Food = require('./lib/models/food')
-var pry = require('pryjs');
+var Meal = require('./lib/models/meal')
 
 app.set('port', process.env.PORT || 7878);
 app.locals.title = "Quantified Self"
@@ -84,6 +84,16 @@ app.delete('/api/v1/foods/:id', function (request, response) {
         .then(function(data) {
           response.json(data.rows)
         })
+    })
+})
+
+app.get('/api/v1/meals/:id', function(request, response) {
+  var id = request.params.id
+
+  Meal.find(id)
+    .then(function(data) {
+      if(data.rowCount == 0) { return response.sendStatus(404) }
+      response.json(data.rows[0])
     })
 })
 
