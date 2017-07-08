@@ -78,7 +78,7 @@ app.put('/api/v1/foods/:id', function (request, response) {
 app.delete('/api/v1/foods/:id', function (request, response) {
   var id = request.params.id
 
-  Food.destroy(id)
+  Food.deactivate(id)
     .then(function() {
       Food.all()
         .then(function(data) {

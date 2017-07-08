@@ -283,17 +283,26 @@ describe('Server', function() {
         if(error) { done(error) }
         assert.equal(response.statusCode, 200)
 
-        ourRequest.get('api/v1/foods', function(error, response) {
+        var parsedFood = JSON.parse(response.body)
+
+        assert.equal(parsedFood.length, 2)
+        assert.equal(parsedFood[0].name, 'taco')
+        assert.equal(parsedFood[0].calories, 400)
+        assert.equal(parsedFood[0].active, true)
+        assert.ok(parsedFood[0].created_at)
+        assert.ok(parsedFood[0].updated_at)
+
+        ourRequest.get('api/v1/foods/1', function(error, response) {
           if(error) { done(error) }
+          assert.equal(response.statusCode, 200)
 
-          var parsedFood = JSON.parse(response.body)
+          var deletedFood = JSON.parse(response.body)
 
-          assert.equal(parsedFood.length, 1)
-          assert.equal(parsedFood[0].name, 'taco')
-          assert.equal(parsedFood[0].calories, 400)
-          assert.equal(parsedFood[0].active, true)
-          assert.ok(parsedFood[0].created_at)
-          assert.ok(parsedFood[0].updated_at)
+          assert.equal(deletedFood.name, 'banana')
+          assert.equal(deletedFood.calories, 200)
+          assert.equal(deletedFood.active, false)
+          assert.ok(deletedFood.created_at)
+          assert.ok(deletedFood.updated_at)
           done()
         })
       })
