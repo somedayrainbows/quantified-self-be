@@ -41,7 +41,6 @@ app.get('/api/v1/foods/:id', function(request, response) {
 app.post('/api/v1/foods', function(request, response) {
   var name = request.body.name
   var calories = request.body.calories
-  var active = request.body.active
 
   // if (!name) {
   //   return response.status(422).send({
@@ -49,15 +48,13 @@ app.post('/api/v1/foods', function(request, response) {
   //   })
   // }
 
-  Food.createFood(name, calories, active)
+  Food.createFood(name, calories)
   .then(function() {
     Food.findByName(name)
     .then(function(data) {
       response.json(data.rows[0])
     })
   })
-
-  // eval(pry.it);
 
   //   if (error)
   //   response.send(error)
