@@ -8,10 +8,11 @@ var MealFood = require('../lib/models/mealFood')
 router.get('/api/v1/meals/:id', function(request, response) {
   var id = request.params.id
 
-  Meal.find(id)
+  Meal.foods(id)
     .then(function(data) {
-      if(data.rowCount == 0) { return response.sendStatus(404) }
-      response.json(data.rows[0])
+      if(data.rowCount == 0) { return response.status(404).send({ message: 'This meal has no foods' }) }
+
+      response.json(data.rows)
     })
 })
 
