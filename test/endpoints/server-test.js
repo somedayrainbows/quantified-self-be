@@ -3,6 +3,7 @@ var app = require('../../server')
 var request = require('request')
 var Food = require('../../lib/models/food')
 var Meal = require('../../lib/models/meal')
+var MealFood = require('../../lib/models/mealFood')
 
 
 describe('Server', function() {
@@ -20,7 +21,6 @@ describe('Server', function() {
   after(function() {
     this.server.close()
   })
-
 
   it('exists', function() {
     assert(app)
@@ -97,7 +97,6 @@ describe('Server', function() {
       Food.emptyFoodsTable().then(function() { done() })
     })
 
-
     it('should return a 404 if the resource is not found', function(done) {
       this.request.get('/api/v1/foods/100000', function(error, response) {
         if(error) { done(error) }
@@ -144,6 +143,7 @@ describe('Server', function() {
     })
   })
 
+
   describe('POST /api/v1/foods', function() {
     beforeEach(function(done) {
       Food.createFood('banana', 200)
@@ -159,27 +159,28 @@ describe('Server', function() {
 
     it('should receive and store data', function(done) {
       var postOptions = {
-          url: '/api/v1/foods',
-          method: 'POST',
-          json: true,
-          body: {
-            name: 'pasta',
-            calories: 200
-          }
+        url: '/api/v1/foods',
+        method: 'POST',
+        json: true,
+        body: {
+          name: 'pasta',
+          calories: 200
+        }
       }
 
-    this.request(postOptions, function(error, response) {
-      if (error) { done(error) }
+      this.request(postOptions, function(error, response) {
+        if(error) { done(error) }
 
-      assert.equal(response.body.id, 3)
-      assert.equal(response.body.name, "pasta")
-      assert.equal(response.body.calories, 200)
-      assert.equal(response.body.active, true)
-      assert.ok(response.body.created_at)
-      done()
+        assert.equal(response.body.id, 3)
+        assert.equal(response.body.name, "pasta")
+        assert.equal(response.body.calories, 200)
+        assert.equal(response.body.active, true)
+        assert.ok(response.body.created_at)
+        done()
       })
     })
   })
+
 
   describe('PUT /api/v1/foods/:id', function() {
     beforeEach(function(done) {
@@ -279,7 +280,6 @@ describe('Server', function() {
       Food.emptyFoodsTable().then(function() { done() })
     })
 
-
     it('should delete a food given an id', function(done) {
       var id = 1
       var ourRequest = this.request
@@ -317,63 +317,134 @@ describe('Server', function() {
         })
       })
     })
-
-    describe('GET /api/v1/meals/:id', function() {
-      beforeEach(function(done) {
-        Meal.createMeal('Breakfast', 400)
-          .then(function() {
-            Meal.createMeal('Lunch', 600)
-              .then(function() { done() })
-          })
-      })
-
-      afterEach(function(done) {
-        Meal.emptyMealsTable().then(function() { done() })
-      })
+  })
 
 
-      it('should return a 404 if the resource is not found', function(done) {
-        this.request.get('/api/v1/meals/100000', function(error, response) {
-          if(error) { done(error) }
-
-          assert.equal(response.statusCode, 404)
-          console.log('That meal doesn\'t exist.')
-          done()
+  describe('GET /api/v1/meals/:id', function() {
+    beforeEach(function(done) {
+      Meal.createMeal('Breakfast', 400)
+        .then(function() {
+          Meal.createMeal('Lunch', 600)
+            .then(function() {
+              Food.createFood('Hot Wings', 555)
+                .then(function() {
+                  Food.createFood('French Fries', 444)
+                    .then(function() {
+                      MealFood.createMealFood(1, 2)
+                        .then(function() {
+                          MealFood.createMealFood(2, 2)
+                            .then(function() { done() })
+                        })
+                    })
+                })
+            })
         })
-      })
+    })
 
-      it('should find a meal by id', function(done) {
-        var id = 1
-
-        this.request.get('/api/v1/meals/' + id, function(error, response) {
-          if(error) { done(error) }
-
-          var parsedMeal = JSON.parse(response.body)
-
-          assert.equal(parsedMeal.id, id)
-          assert.equal(parsedMeal.name, 'Breakfast')
-          assert.equal(parsedMeal.goal_calories, 400)
-          assert.ok(parsedMeal.created_at)
-          done()
+    afterEach(function(done) {
+      Meal.emptyMealsTable()
+        .then(function() {
+          Food.emptyFoodsTable()
+            .then(function() {
+              MealFood.emptyMealFoodsTable()
+                .then(function() { done() })
+            })
         })
-      })
+    })
 
-      it('should find a different meal by id', function(done) {
-        var id = 2
+    it('should return a 404 if the resource is not found', function(done) {
+      this.request.get('/api/v1/meals/100000', function(error, response) {
+        if(error) { done(error) }
 
-        this.request.get('/api/v1/meals/' + id, function(error, response) {
-          if(error) { done(error) }
-
-          var parsedMeal = JSON.parse(response.body)
-
-          assert.equal(parsedMeal.id, id)
-          assert.equal(parsedMeal.name, 'Lunch')
-          assert.equal(parsedMeal.goal_calories, 600)
-          assert.ok(parsedMeal.created_at)
-          done()
-        })
+        assert.equal(response.statusCode, 404)
+        console.log('That meal doesn\'t exist.')
+        done()
       })
     })
 
+    it('should find a meal by id without any associated foods', function(done) {
+      var id = 1
+
+      this.request.get('/api/v1/meals/' + id, function(error, response) {
+        if(error) { done(error) }
+
+        var message = JSON.parse(response.body).message
+
+        assert.equal(message, 'This meal has no foods')
+        done()
+      })
+    })
+
+    it('should find a different meal by id and display its associated foods', function(done) {
+      var id = 2
+
+      this.request.get('/api/v1/meals/' + id, function(error, response) {
+        if(error) { done(error) }
+
+        var parsedMeal = JSON.parse(response.body)
+
+        assert.equal(parsedMeal.length, 2)
+        assert.equal(parsedMeal[0].id, 1)
+        assert.equal(parsedMeal[0].name, 'Hot Wings')
+        assert.equal(parsedMeal[0].calories, 555)
+        assert.equal(parsedMeal[0].active, true)
+        assert.ok(parsedMeal[0].created_at)
+        assert.ok(parsedMeal[0].updated_at)
+        assert.equal(parsedMeal[1].id, 2)
+        assert.equal(parsedMeal[1].name, 'French Fries')
+        assert.equal(parsedMeal[1].calories, 444)
+        assert.equal(parsedMeal[1].active, true)
+        assert.ok(parsedMeal[1].created_at)
+        assert.ok(parsedMeal[1].updated_at)
+        done()
+      })
+    })
+  })
+
+
+  describe('POST /api/v1/meals/:id', function() {
+    beforeEach(function(done) {
+      Meal.createMeal('Breakfast', 400)
+        .then(function() {
+          Food.createFood('McGriddle', 900)
+            .then(function() { done() })
+        })
+    })
+
+    afterEach(function(done) {
+      Meal.emptyMealsTable()
+        .then(function() {
+          Food.emptyFoodsTable()
+            .then(function() {
+              MealFood.emptyMealFoodsTable()
+                .then(function() { done() })
+            })
+        })
+    })
+
+    it('should post a food to a meal', function(done) {
+      var id = 1
+      var postOptions = {
+          url: '/api/v1/meals/' + id,
+          method: 'POST',
+          json: true,
+          body: {
+            name: 'McGriddle'
+          }
+      }
+
+      this.request(postOptions, function(error, response) {
+        if (error) { done(error) }
+
+        assert.equal(response.body.length, 1)
+        assert.equal(response.body[0].id, 1)
+        assert.equal(response.body[0].name, 'McGriddle')
+        assert.equal(response.body[0].calories, 900)
+        assert.equal(response.body[0].active, true)
+        assert.ok(response.body[0].created_at)
+        assert.ok(response.body[0].updated_at)
+        done()
+      })
+    })
   })
 })
