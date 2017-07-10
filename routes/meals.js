@@ -43,4 +43,27 @@ router.post('/api/v1/meals/:id', function(request, response) {
     })
 })
 
+router.delete('/api/v1/meals/:id', function(request, response) {
+  var idMeal = parseInt(request.params.id, 10)
+  var name = request.body.name
+
+  Food.findByName(name)
+    .then(function(data) {
+      if(data.rowCount == 0) { return response.sendStatus(404) }
+
+      var idFood = data.rows[0].id
+
+      MealFood.destroy(idFood, idMeal)
+        .then(function() {
+          Meal.foods(idMeal)
+            .then(function(data) {
+              if(data.rowCount == 0) {return response.sendStatus(404)}
+
+              response.json(data.rows)
+            })
+          })
+        })
+})
+
+
 module.exports = router
