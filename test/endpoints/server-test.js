@@ -50,17 +50,7 @@ describe('Server', function() {
             })
         })
     })
-    // beforeEach(() => knex.migrate.rollback()
-    //   .then(() => knex.migrate.latest())
-    //   .then(() => knex.seed.run())
-    // );
-    //
-    // afterEach(function(done) {
-    //   knex.migrate.rollback()
-    //   .then(function() {
-    //     done();
-    //   });
-    // });
+
     afterEach(function(done) {
       Food.emptyFoodsTable().then(function() { done() })
     })
@@ -82,7 +72,6 @@ describe('Server', function() {
       })
     })
   })
-
 
   describe('GET /api/v1/foods/:id', function() {
     beforeEach(function(done) {
@@ -143,7 +132,6 @@ describe('Server', function() {
     })
   })
 
-
   describe('POST /api/v1/foods', function() {
     beforeEach(function(done) {
       Food.createFood('banana', 200)
@@ -180,7 +168,6 @@ describe('Server', function() {
       })
     })
   })
-
 
   describe('PUT /api/v1/foods/:id', function() {
     beforeEach(function(done) {
@@ -266,7 +253,6 @@ describe('Server', function() {
     })
   })
 
-
   describe('DELETE /api/v1/foods/:id', function() {
     beforeEach(function(done) {
       Food.createFood('banana', 200)
@@ -318,7 +304,6 @@ describe('Server', function() {
       })
     })
   })
-
 
   describe('GET /api/v1/meals/:id', function() {
     beforeEach(function(done) {
@@ -401,7 +386,6 @@ describe('Server', function() {
     })
   })
 
-
   describe('POST /api/v1/meals/:id', function() {
     beforeEach(function(done) {
       Meal.createMeal('Breakfast', 400)
@@ -438,6 +422,67 @@ describe('Server', function() {
 
         assert.equal(response.body.length, 1)
         assert.equal(response.body[0].id, 1)
+        assert.equal(response.body[0].name, 'McGriddle')
+        assert.equal(response.body[0].calories, 900)
+        assert.equal(response.body[0].active, true)
+        assert.ok(response.body[0].created_at)
+        assert.ok(response.body[0].updated_at)
+        done()
+      })
+    })
+  })
+
+  describe('DELETE /api/v1/meals/:id', function() {
+    this.timeout(10000000)
+
+    beforeEach(function(done) {
+      Meal.createMeal('Breakfast', 400)
+        .then(function() {
+          Food.createFood('McGriddle', 900)
+            .then(function() {
+              Food.createFood('McRib', 800)
+                .then(function() {
+                  MealFood.createMealFood(1, 1)
+                    .then(function() {
+                      MealFood.createMealFood(2, 1)
+                        .then(function() { done() })
+                      })
+                  })
+              })
+          })
+      })
+
+    afterEach(function(done) {
+      Meal.emptyMealsTable()
+        .then(function() {
+          Food.emptyFoodsTable()
+            .then(function() {
+              MealFood.emptyMealFoodsTable()
+                .then(function() { done() })
+            })
+        })
+    })
+
+    it('should delete a food from a meal', function(done) {
+      var mealId = 1
+
+      var deleteOptions = {
+        url: '/api/v1/meals/' + mealId,
+        method: 'DELETE',
+        json: true,
+        body: {
+          name: 'McRib'
+        }
+      }
+
+      this.request(deleteOptions, function(error, response) {
+        if(error) { done(error) }
+
+        assert.equal(response.statusCode, 200)
+
+        assert.equal(response.body.length, 1)
+        assert.equal(response.body[0].id, 1)
+        assert.notEqual(response.body[0].name, 'McRib')
         assert.equal(response.body[0].name, 'McGriddle')
         assert.equal(response.body[0].calories, 900)
         assert.equal(response.body[0].active, true)
