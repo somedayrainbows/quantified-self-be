@@ -34,7 +34,7 @@ router.post('/api/v1/foods', function(request, response) {
 
   Food.createFood(name, calories)
   .then(function() {
-    Food.findByName(name)
+    Food.findLastFoodCreated()
     .then(function(data) {
       response.json(data.rows[0])
     })
