@@ -62,8 +62,8 @@ describe('Server', function() {
         var allFood = JSON.parse(response.body)
 
         assert.equal(allFood.length, 3)
-        assert.equal(allFood[0].name, 'cheetos')
-        assert.equal(allFood[2].name, 'banana')
+        assert.equal(allFood[0].name, 'banana')
+        assert.equal(allFood[2].name, 'cheetos')
         assert.equal(allFood[1].calories, 400)
         assert.ok(allFood[1].created_at)
         assert.ok(allFood[2].updated_at)
@@ -433,8 +433,6 @@ describe('Server', function() {
   })
 
   describe('DELETE /api/v1/meals/:id', function() {
-    this.timeout(10000000)
-
     beforeEach(function(done) {
       Meal.createMeal('Breakfast', 400)
         .then(function() {
