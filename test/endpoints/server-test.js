@@ -281,7 +281,7 @@ describe('Server', function() {
 
         var parsedFood = JSON.parse(response.body)
 
-        assert.equal(parsedFood.length, 2)
+        assert.equal(parsedFood.length, 1)
         assert.equal(parsedFood[0].name, 'taco')
         assert.equal(parsedFood[0].calories, 400)
         assert.equal(parsedFood[0].active, true)
