@@ -17,6 +17,22 @@ exports.seed = function(knex, Promise) {
         knex.raw(
           'INSERT INTO foods (name, calories, created_at, updated_at) VALUES (?, ?, ?, ?)',
           ["Baguette", 200, new Date(), new Date()]
+        ),
+        knex.raw(
+          'INSERT INTO foods (name, calories, created_at, updated_at) VALUES (?, ?, ?, ?)',
+          ["Yogurt", 150, new Date(), new Date()]
+        ),
+        knex.raw(
+          'INSERT INTO foods (name, calories, created_at, updated_at) VALUES (?, ?, ?, ?)',
+          ["Sandwich", 330, new Date(), new Date()]
+        ),
+        knex.raw(
+          'INSERT INTO foods (name, calories, created_at, updated_at) VALUES (?, ?, ?, ?)',
+          ["Soup", 200, new Date(), new Date()]
+        ),
+        knex.raw(
+          'INSERT INTO foods (name, calories, created_at, updated_at) VALUES (?, ?, ?, ?)',
+          ["Caviar", 200, new Date(), new Date()]
         )
       ])
     })
